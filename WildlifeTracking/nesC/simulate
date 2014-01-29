@@ -1,0 +1,6 @@
+#!/bin/sh
+
+if [ "$1" = "rebuild" ]; then
+cncmake micaz sim;
+fi
+./simulate.py
