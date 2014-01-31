@@ -3,7 +3,7 @@ context InRange {
   uses interface Packet;
   uses interface AMPacket;
   uses interface AMSend;
-  
+  uses context group BatteryC;
   provides interface LogDumper;
 }
 implementation {
@@ -11,6 +11,10 @@ implementation {
   message_t pkt;
   uint16_t pointer = STORAGE_SIZE;
   LocationMsg* buffer = NULL;
+  
+  command bool check() {
+    return call BatteryC.getContext() == BatteryC.Normal;
+  }
   
   event void activated() {
     dbg("Debug", "BS.IR activated.\n");

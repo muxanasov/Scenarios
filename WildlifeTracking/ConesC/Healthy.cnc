@@ -1,6 +1,7 @@
 #include "BeaconMsg.h"
 
 context Healthy {
+  transitions Diseased iff LocatorC.NotMoving || LocatorC.Resting;
 }
 implementation {
   event void activated() {

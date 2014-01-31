@@ -6,11 +6,14 @@ implementation {
     InRange,
     OutRange is default,
     GPSSensorC,
+    BatteryC,
     new AMSenderC(AM_BEACON);
     
   InRange.Packet -> AMSenderC;
   InRange.AMPacket -> AMSenderC;
   InRange.AMSend -> AMSenderC;
+  InRange.BatteryC -> BatteryC;
+  
   OutRange.GPSSensor -> GPSSensorC;
   OutRange.LogDumper -> InRange;
 }

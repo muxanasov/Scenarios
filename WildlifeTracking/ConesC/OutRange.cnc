@@ -1,5 +1,6 @@
 #include "BeaconMsg.h"
 context OutRange {
+  transitions InRange iff LocatorC.Running;
   uses interface LogDumper;
   uses interface GPSSensor;
 }

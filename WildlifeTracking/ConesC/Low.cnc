@@ -1,4 +1,5 @@
 context Low {
+  triggers BaseStationC.OutRange;
   uses interface GPSSensor;
 }
 implementation {
