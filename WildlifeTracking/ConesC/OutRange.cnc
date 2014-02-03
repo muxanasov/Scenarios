@@ -10,11 +10,9 @@ implementation {
   
   event void activated() {
     dbg("Debug", "BS.OR activated.\n");
-    call GPSSensor.start();
   }
   
   event void deactivated() {
-    call GPSSensor.stop();
     dbg("Debug", "Dump log.\n");
     post dump();
   }

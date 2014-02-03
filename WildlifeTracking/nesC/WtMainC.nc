@@ -121,7 +121,6 @@ implementation {
           // reset watch dog timer
           call BSReset.startOneShot(BSBEACON_TIMEOUT);
           inRange = TRUE;
-          call GPSSensor.stop();
           dbg("Debug", "Dump log.\n");
           //activate BaseStationC.InRange;
           break;
@@ -133,7 +132,6 @@ implementation {
   event void BSReset.fired() {
 	dbg("Debug", "BSeset fired.\n");
     inRange = FALSE;
-    call GPSSensor.start();
   }
   void sendBeacon() {
 	BeaconMsg* bmpkt = NULL;
