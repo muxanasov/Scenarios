@@ -1,5 +1,6 @@
 #include "types.h"
 context Normal {
+  uses context group NodeStatusG;
   uses interface Read<uint16_t> as TemperatureSensor;
   uses interface Read<uint16_t> as LightSensor;
   uses interface GPRS;
@@ -18,6 +19,7 @@ context Normal {
     msg.light = val;
   }
   layered void sendLog() {
+    msg.status = call NodeStatusG.buildStatus();
     // send message to the BS
   }
 }

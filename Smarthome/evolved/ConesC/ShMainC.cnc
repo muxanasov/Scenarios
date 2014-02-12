@@ -4,6 +4,7 @@ module ShMainC {
   uses context group LightIntencityG;
   uses context group ClimateG;
   uses context group PreferencesG;
+  uses context group NodeStatusG;
   uses interface Read<uint16_t> as TemperatureSensor;
   uses interface Read<uint16_t> as LightSensor;
   uses interface Read<uint16_t> as SmokeSensor;
@@ -25,7 +26,11 @@ module ShMainC {
     call EmergencyG.sendLog();
   }
   event void Time.readDone(error_t res, uint16_t val) {
-    if (res != SUCCESS) return;
+    if (res != SUCCESS) {
+      activate NodeStatusG.Failure;
+      return;
+    }
+    activate NodeStatusG.NormalStatus;
     if (val % DAY_BORDER == 0 && call PreferencesG.getContext() != PreferencesG.Weekend) 
       activate PreferencesG.Day;
     else if (val % NIGHT_BORDER == 0 && call PreferencesG.getContext() != PreferencesG.Weekend) 
@@ -35,7 +40,11 @@ module ShMainC {
   }
   event void TemperatureSensor.readDone(error_t res, uint16_t val) {
     uint16_t prefs;
-    if (res != SUCCESS) return;
+    if (res != SUCCESS) {
+      activate NodeStatusG.Failure;
+      return;
+    }
+    activate NodeStatusG.NormalStatus;
     prefs = (call PreferencesG.prefs())->temperature;
     if (val == prefs) activate ClimateG.NormalClm;
     else if (val < prefs) activate ClimateG.Low;
@@ -43,12 +52,34 @@ module ShMainC {
   }
   event void LightSensor.readDone(error_t res, uint16_t val) {
     uint16_t prefs;
-    if (res != SUCCESS) return;
+    if (res != SUCCESS) {
+      activate NodeStatusG.Failure;
+      return;
+    }
+    activate NodeStatusG.NormalStatus;
     prefs = (call PreferencesG.prefs())->light;
     if (val >= prefs) activate LightIntencityG.Bright;
     else activate LightIntencityG.Dark;
   }
-  event void SmokeSensor.readDone(error_t res, uint16_t val) {}
-  event void Camera.readDone(error_t res, uint16_t val) {}
-  event void Accelerometer.readDone(error_t res, uint16_t val) {}
+  event void SmokeSensor.readDone(error_t res, uint16_t val) {
+    if (res != SUCCESS) {
+      activate NodeStatusG.Failure;
+      return;
+    }
+    activate NodeStatusG.NormalStatus;
+  }
+  event void Camera.readDone(error_t res, uint16_t val) {
+    if (res != SUCCESS) {
+      activate NodeStatusG.Failure;
+      return;
+    }
+    activate NodeStatusG.NormalStatus;
+  }
+  event void Accelerometer.readDone(error_t res, uint16_t val) {
+    if (res != SUCCESS) {
+      activate NodeStatusG.Failure;
+      return;
+    }
+    activate NodeStatusG.NormalStatus;
+  }
 }

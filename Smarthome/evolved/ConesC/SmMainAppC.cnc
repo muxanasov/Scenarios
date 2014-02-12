@@ -1,6 +1,7 @@
 configuration SmMainAppC {}
 implementation {
   components
+    NodeStatusG,
     EmergencyG,
     EmergencyContextManager,
     LightIntencityG,
@@ -20,6 +21,7 @@ implementation {
   ShMainC.LightIntencityG -> LightIntencityG;
   ShMainC.ClimateG -> ClimateG;
   ShMainC.PreferencesG -> PreferencesG;
+  ShMainC.NodeStatusG -> NodeStatusG;
   
   ShMainC.Boot -> MainC;
   ShMainC.SamplingTimer -> SamplingTimer;

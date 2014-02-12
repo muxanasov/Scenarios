@@ -7,7 +7,7 @@ context group EmergencyG {
 } implementation {
   contexts Normal is default,
     Housebreaking, Fire;
-  components GPRSC, new TimerMilliC() as Timer,
+  components GPRSC, new TimerMilliC() as Timer, NodeStatusG,
     ActiveMessageC, CollectionC, new CollectionSenderC(0xee);
   
   GPRSC.Timer -> Timer;
@@ -15,6 +15,7 @@ context group EmergencyG {
   Normal.TemperatureSensor = TemperatureSensor;
   Normal.LightSensor = LightSensor;
   Normal.GPRS -> GPRSC;
+  Normal.NodeStatusG -> NodeStatusG;
   
   Fire.TemperatureSensor = TemperatureSensor;
   Fire.SmokeSensor = SmokeSensor;
