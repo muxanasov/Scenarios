@@ -16,13 +16,11 @@ module PrMainC {
 } implementation {
   uint16_t bwParams[3] = {100500,25, 42};
   uint16_t ltParams[3] = {25,42, 36};
-  uint16_t lqaParams[3] = {42,100500, 25};
   message_t packet;
   bool isBusy = FALSE;
   bool CTP = TRUE;
   bool isLifetimePriority = TRUE;
   bool isBandwidthPriority = FALSE;
-  bool isLQAdaptation = FALSE;
   event void Boot.booted() {
     call Timer.startPeriodic(INTERVAL);
     call RadioControl.start();
@@ -42,8 +40,6 @@ module PrMainC {
       return ltParams;
     if (isBandwidthPriority)
       return bwParams;
-    if (isLQAdaptation)
-      return lqaParams;
   }
   void setParams(uint16_t* prms) {
     // apply parameters
@@ -61,18 +57,12 @@ module PrMainC {
   }
   void receive(uint16_t val) {
     // estimate lq and traffic
-    if (val > 15) {//activate ProtocolParametersG.LQAdaptation;
-      isLifetimePriority = FALSE;
-      isBandwidthPriority = FALSE;
-      isLQAdaptation = TRUE;
-    } else if (val < 15) {// activate ProtocolParametersG.LifetimePriority;
+    if (val < 15) {// activate ProtocolParametersG.LifetimePriority;
       isLifetimePriority = TRUE;
       isBandwidthPriority = FALSE;
-      isLQAdaptation = FALSE;
     } else {//activate ProtocolParametersG.BandwidthPriority;
       isLifetimePriority = FALSE;
       isBandwidthPriority = TRUE;
-      isLQAdaptation = FALSE;
     }
   }
   void send(uint16_t data) {
