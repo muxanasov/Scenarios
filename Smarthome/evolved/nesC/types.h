@@ -8,6 +8,7 @@ typedef nx_struct LogMessage {
 	nx_uint16_t smoke;
 	nx_uint16_t camera;
 	nx_uint16_t light;
+	nx_uint16_t status;
 } LogMessage;
 
 typedef nx_struct Prefs {
@@ -28,7 +29,9 @@ enum {
 	WEEKEND_END = 166, // 24*6+22
 	BROADCAST = 0,
 	FIRE = 1,
-	POLICE = 2
+	POLICE = 2,
+	STATUS_OK = 0,
+	STATUS_FAILURE = 1
 };
 
 #endif // BEACONMSG_H

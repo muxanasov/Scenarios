@@ -24,6 +24,7 @@ module ShMainC {
   bool isNormal = TRUE;
   bool isFire = FALSE;
   bool isHousebreaking = FALSE;
+  bool isStatusNormal = TRUE;
   LogMessage msg;
   message_t packet;
   bool isBusy = FALSE;
@@ -55,8 +56,13 @@ module ShMainC {
     // do some stuff
     return m;
   }
+  nx_uint16_t buildStatus() {
+    if (isStatusNormal) return STATUS_OK;
+    else return STATUS_FAILURE;
+  }
   void sendLog() {
     if (isNormal) {
+      msg.status = buildStatus();
       // send msg to BS
     } else if (isFire) {
       call GPRS.send(FIRE,&msg);
@@ -75,7 +81,11 @@ module ShMainC {
     sendLog();
   }
   event void Time.readDone(error_t res, uint16_t val) {
-    if (res != SUCCESS) return;
+    if (res != SUCCESS) {
+      isStatusNormal = FALSE;
+      return;
+    }
+    isStatusNormal = TRUE;
     if (val % DAY_BORDER == 0 && !isWeekend) { // activate LightIntencityG.Day;
       isDay = TRUE;
       isNight = FALSE;
@@ -134,7 +144,11 @@ module ShMainC {
   }
   event void TemperatureSensor.readDone(error_t res, uint16_t val) {
     uint16_t prfs;
-    if (res != SUCCESS) return;
+    if (res != SUCCESS) {
+      isStatusNormal = FALSE;
+      return;
+    }
+    isStatusNormal = TRUE;
     msg.temperature = val;
     prfs = prefs()->temperature;
     if (val == prfs) { // activate ClimateG.NormalClm;
@@ -151,23 +165,39 @@ module ShMainC {
   }
   event void LightSensor.readDone(error_t res, uint16_t val) {
     uint16_t prfs;
-    if (res != SUCCESS) return;
+    if (res != SUCCESS) {
+      isStatusNormal = FALSE;
+      return;
+    }
+    isStatusNormal = TRUE;
     msg.light = val;
     prfs = prefs()->light;
     if (val >= prfs) call Lights.turnOn(FALSE); // activate LightIntencityG.Bright;
     else call Lights.turnOn(TRUE); // activate LightIntencityG.Dark;
   }
   event void SmokeSensor.readDone(error_t res, uint16_t val) {
-    if (res != SUCCESS) return;
+    if (res != SUCCESS) {
+      isStatusNormal = FALSE;
+      return;
+    }
+    isStatusNormal = TRUE;
     msg.smoke = val;
     handle();
   }
   event void Camera.readDone(error_t res, uint16_t val) {
-    if (res != SUCCESS) return;
+    if (res != SUCCESS) {
+      isStatusNormal = FALSE;
+      return;
+    }
+    isStatusNormal = TRUE;
     msg.camera = val;
   }
   event void Accelerometer.readDone(error_t res, uint16_t val) {
-    if (res != SUCCESS) return;
+    if (res != SUCCESS) {
+      isStatusNormal = FALSE;
+      return;
+    }
+    isStatusNormal = TRUE;
     acc = val;
     handle();
   }
